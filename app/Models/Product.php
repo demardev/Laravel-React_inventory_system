@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Product extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['name', 'ucc', 'quantity'];
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
+

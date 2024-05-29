@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('ucc', 12)->unique();
+            $table->integer('quantity')->default(0);
             $table->timestamps();
         });
     }
@@ -25,3 +28,4 @@ return new class extends Migration
         Schema::dropIfExists('products');
     }
 };
+
