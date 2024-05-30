@@ -1,62 +1,54 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
-function ProductForm() {
-    const [name, setName] = useState('');
-    const [ucc, setUcc] = useState('');
-    const [quantity, setQuantity] = useState(0);
-    const navigate = useNavigate();
+const ProductForm = () => {
+    const [product, setProduct] = useState({
+        name: '',
+        description: '',
+    });
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        axios.post('/api/products', { name, ucc, quantity })
-        .then(response => {
-            console.log('Product created:', response.data);
-            // Resetear el formulario
-            setName('');
-            setUcc('');
-            setQuantity(0);
-        })
-        .catch(error => {
-            console.error('There was an error creating the product!', error);
-        });
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setProduct({ ...product, [name]: value });
     };
 
-    const handleUccChange = (event) => {
-        const value = event.target.value;
-        // Asegurarse de que el valor sea numérico y no exceda los 12 caracteres
-        if (/^\d{0,12}$/.test(value)) {
-            setUcc(value);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post('/api/products', product);
+            console.log('Product created:', response.data);
+            setProduct({ name: '', description: '' });
+        } catch (error) {
+            console.error('Error creating product:', error);
         }
     };
 
     return (
         <form onSubmit={handleSubmit}>
             <div className="form-group">
-                <label>Nombre del Producto:</label>
-                <input type="text" className="form-control" value={name} onChange={(e) => setName(e.target.value)} required />
+                <label>Nombre del Producto</label>
+                <input
+                    type="text"
+                    name="name"
+                    value={product.name}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="Nombre del Producto"
+                />
             </div>
             <div className="form-group">
-                <label>UCC:</label>
-                <input 
-                type="text" 
-                className="form-control" 
-                value={ucc} 
-                onChange={handleUccChange}
-                maxLength="12" 
-                required 
-                pattern="\d{12}" 
-                title="El UCC debe tener 12 dígitos"  />
+                <label>Descripción</label>
+                <textarea
+                    name="description"
+                    value={product.description}
+                    onChange={handleChange}
+                    className="form-control"
+                    placeholder="Descripción"
+                />
             </div>
-            <div className="form-group">
-                <label>Cantidad:</label>
-                <input type="number" className="form-control" value={quantity} onChange={(e) => setQuantity(e.target.value)} required />
-            </div>
-            <button type="submit" className="btn btn-primary">Crear Producto</button>
+            <button type="submit" className="btn btn-primary">Guardar Producto</button>
         </form>
     );
-}
+};
 
 export default ProductForm;
-

@@ -2,65 +2,130 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductBox;
 use App\Models\Transaction;
-use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Transaction::with('product', 'user', 'supplier')->get();
+        $query = Transaction::with('product', 'supplier', 'user');
+
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->whereHas('product', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })
+            ->orWhereHas('supplier', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%");
+            })
+            ->orWhereHas('user', function ($q) use ($search) {
+                $q->where('email', 'like', "%{$search}%");
+            })
+            ->orWhere('affected_uccs', 'like', "%{$search}%");
+        }
+
+        return $query->orderBy('created_at', 'desc')->paginate(10);
     }
 
     public function store(Request $request)
     {
-        Log::info('Transaction store called');
+        Log::info('Request data:', $request->all());
 
-        // Log the incoming request data
-        Log::info('Request Data: ', $request->all());
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'supplier_id' => 'required|exists:suppliers,id',
+            'type' => 'required|string|in:Entrada,Salida,Ajuste',
+            'quantity' => 'required|numeric|min:1',
+        ]);
 
-        // Validate the incoming request data
         try {
-            $validatedData = $request->validate([
-                'product_id' => 'required|exists:products,id',
-                'user_id' => 'required|exists:users,id',
-                'supplier_id' => 'nullable|exists:suppliers,id',
-                'type' => 'required|in:entrada,salida,ajuste',
-                'quantity' => 'required|integer',
+            $affectedUCCs = [];
+
+            $transaction = Transaction::create([
+                'product_id' => $request->product_id,
+                'supplier_id' => $request->supplier_id,
+                'user_id' => 1, // Cambia esto según el usuario autenticado
+                'quantity' => $request->quantity,
+                'type' => $request->type,
+                'affected_uccs' => null,
             ]);
-            Log::info('Validated Data: ', $validatedData);
-        } catch (\Exception $e) {
-            Log::error('Validation Error: ' . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
 
-        // Update the product quantity based on the transaction type
-        try {
-            $product = Product::findOrFail($validatedData['product_id']);
-            if ($validatedData['type'] === 'entrada') {
-                $product->quantity += $validatedData['quantity'];
-            } elseif ($validatedData['type'] === 'salida') {
-                $product->quantity -= $validatedData['quantity'];
-                if ($product->quantity < 0) {
-                    return response()->json(['error' => 'Insufficient product quantity'], 400);
+            if ($request->type == 'Entrada') {
+                for ($i = 0; $i < $request->quantity; $i++) {
+                    $ucc = $this->generateUniqueUCC();
+                    ProductBox::create([
+                        'product_id' => $request->product_id,
+                        'supplier_id' => $request->supplier_id,
+                        'ucc' => $ucc,
+                    ]);
+                    $affectedUCCs[] = $ucc;
                 }
-            } // For 'ajuste', you may want to implement custom logic based on your requirements
-            $product->save();
-        } catch (\Exception $e) {
-            Log::error('Product Update Error: ' . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
 
-        // Create the transaction
-        try {
-            $transaction = Transaction::create($validatedData);
-            Log::info('Transaction created: ', $transaction->toArray());
-            return response()->json($transaction, 201);
+                $transaction->affected_uccs = json_encode($affectedUCCs);
+                $transaction->save();
+            } elseif ($request->type == 'Salida') {
+                $boxes = ProductBox::where('product_id', $request->product_id)
+                    ->where('supplier_id', $request->supplier_id)
+                    ->take($request->quantity)
+                    ->get();
+
+                foreach ($boxes as $box) {
+                    $affectedUCCs[] = $box->ucc;
+                    $box->delete();
+                }
+
+                $transaction->affected_uccs = json_encode($affectedUCCs);
+                $transaction->save();
+            } elseif ($request->type == 'Ajuste') {
+                $currentCount = ProductBox::where('product_id', $request->product_id)
+                    ->where('supplier_id', $request->supplier_id)
+                    ->count();
+
+                if ($request->quantity > $currentCount) {
+                    $difference = $request->quantity - $currentCount;
+                    for ($i = 0; $i < $difference; $i++) {
+                        $ucc = $this->generateUniqueUCC();
+                        ProductBox::create([
+                            'product_id' => $request->product_id,
+                            'supplier_id' => $request->supplier_id,
+                            'ucc' => $ucc,
+                        ]);
+                        $affectedUCCs[] = $ucc;
+                    }
+                } elseif ($request->quantity < $currentCount) {
+                    $difference = $currentCount - $request->quantity;
+                    $boxes = ProductBox::where('product_id', $request->product_id)
+                        ->where('supplier_id', $request->supplier_id)
+                        ->take($difference)
+                        ->get();
+
+                    foreach ($boxes as $box) {
+                        $affectedUCCs[] = $box->ucc;
+                        $box->delete();
+                    }
+                }
+
+                $transaction->affected_uccs = json_encode($affectedUCCs);
+                $transaction->save();
+            }
+
+            Log::info('Transaction created successfully:', $transaction->toArray());
+            return response()->json(['message' => 'Transaction created successfully']);
         } catch (\Exception $e) {
-            Log::error('Transaction Creation Error: ' . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 500);
+            Log::error('Error saving transaction:', ['error' => $e->getMessage()]);
+            return response()->json(['message' => 'Error saving transaction', 'error' => $e->getMessage()], 500);
         }
+    }
+
+    private function generateUniqueUCC()
+    {
+        do {
+            $ucc = mt_rand(100000000000, 999999999999); // Genera un número aleatorio de 12 dígitos
+        } while (ProductBox::where('ucc', $ucc)->exists());
+
+        return $ucc;
     }
 }
