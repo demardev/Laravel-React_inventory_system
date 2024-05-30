@@ -1,24 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import ProductList from './components/ProductList';
+import ProductForm from './components/ProductForm';
+import TransactionForm from './components/TransactionForm';
+import TransactionList from './components/TransactionList';
+import SupplierForm from './components/SupplierForm';
+import NavigationBar from './components/Navbar';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="container">
+        <NavigationBar />
+        <Routes>
+          <Route path="/" element={<ProductList />} />
+          <Route path="/products/new" element={<ProductForm />} />
+          <Route path="/transactions/new" element={<TransactionForm />} />
+          <Route path="/transactions" element={<TransactionList />} />
+          <Route path="/suppliers/new" element={<SupplierForm />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 

@@ -9,7 +9,13 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['product_id', 'user_id', 'supplier_id', 'type', 'quantity'];
+    protected $fillable = [
+        'product_id',
+        'user_id',
+        'supplier_id',
+        'type',
+        'quantity',
+    ];
 
     public function product()
     {
@@ -26,4 +32,5 @@ class Transaction extends Model
         return $this->belongsTo(Supplier::class);
     }
 }
+
 
