@@ -9,16 +9,10 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-        'ucc',
-        'quantity',
-        'price',
-        'supplier_id',
-    ];
+    protected $fillable = ['name', 'description'];
 
-    public function supplier()
+    public function transactions()
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->hasMany(Transaction::class);
     }
 }

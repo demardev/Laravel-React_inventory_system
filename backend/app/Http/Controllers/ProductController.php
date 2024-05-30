@@ -9,50 +9,18 @@ class ProductController extends Controller
 {
     public function index()
     {
-        // Incluir el proveedor en la consulta
-        $products = Product::with('supplier')->get();
-        return response()->json($products);
+        return Product::all();
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'ucc' => 'required|string|max:12|unique:products',
-            'quantity' => 'required|integer',
-            'price' => 'required|numeric',
-            'supplier_id' => 'required|exists:suppliers,id',
+            'description' => 'nullable|string',
         ]);
 
         $product = Product::create($request->all());
 
-        return response()->json($product, 201);
-    }
-
-    public function show(Product $product)
-    {
-        return $product;
-    }
-
-    public function update(Request $request, Product $product)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'ucc' => 'required|string|max:12|unique:products,ucc,' . $product->id,
-            'quantity' => 'required|integer',
-            'price' => 'required|numeric',
-            'supplier_id' => 'required|exists:suppliers,id',
-        ]);
-
-        $product->update($request->all());
-
-        return response()->json($product);
-    }
-
-    public function destroy(Product $product)
-    {
-        $product->delete();
-
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Product created successfully', 'product' => $product]);
     }
 }
