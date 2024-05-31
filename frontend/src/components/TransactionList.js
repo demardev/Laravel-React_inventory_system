@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const TransactionList = () => {
+    // Estado para almacenar transacciones, búsqueda y paginación
     const [transactions, setTransactions] = useState([]);
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
@@ -9,10 +10,12 @@ const TransactionList = () => {
     const [pageGroup, setPageGroup] = useState(1);
     const pagesPerGroup = 10;
 
+    // Efecto para buscar transacciones cuando cambian la búsqueda o la página
     useEffect(() => {
         fetchTransactions();
     }, [search, page]);
 
+    // Función para obtener las transacciones desde el servidor
     const fetchTransactions = async () => {
         try {
             const response = await axios.get('/api/transactions', {
@@ -26,25 +29,29 @@ const TransactionList = () => {
                 setTotalPages(1);
             }
         } catch (error) {
-            console.error('Error fetching transactions:', error);
+            console.error('Error al obtener las transacciones:', error);
             setTransactions([]); // En caso de error, inicializar como array vacío
         }
     };
 
+    // Manejar el cambio en el campo de búsqueda
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
-        setPage(1); // Reset page to 1 when search changes
+        setPage(1); // Reiniciar la página a 1 cuando cambia la búsqueda
     };
 
+    // Manejar el cambio de página
     const handlePageChange = (newPage) => {
         setPage(newPage);
     };
 
+    // Manejar el cambio al siguiente grupo de páginas
     const handleNextPageGroup = () => {
         setPageGroup(pageGroup + 1);
         setPage((pageGroup * pagesPerGroup) + 1);
     };
 
+    // Manejar el cambio al grupo de páginas anterior
     const handlePreviousPageGroup = () => {
         setPageGroup(pageGroup - 1);
         setPage(((pageGroup - 2) * pagesPerGroup) + 1);
@@ -53,6 +60,7 @@ const TransactionList = () => {
     const startPage = (pageGroup - 1) * pagesPerGroup + 1;
     const endPage = Math.min(pageGroup * pagesPerGroup, totalPages);
 
+    // Renderizar la lista de transacciones
     return (
         <div>
             <h2 className='mt-4 mb-3'>Lista de Transacciones</h2>
