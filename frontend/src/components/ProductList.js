@@ -6,6 +6,8 @@ const ProductList = () => {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [pageGroup, setPageGroup] = useState(1);
+    const pagesPerGroup = 10;
 
     useEffect(() => {
         fetchProductBoxes();
@@ -32,9 +34,22 @@ const ProductList = () => {
         setPage(newPage);
     };
 
+    const handleNextPageGroup = () => {
+        setPageGroup(pageGroup + 1);
+        setPage((pageGroup * pagesPerGroup) + 1);
+    };
+
+    const handlePreviousPageGroup = () => {
+        setPageGroup(pageGroup - 1);
+        setPage(((pageGroup - 2) * pagesPerGroup) + 1);
+    };
+
+    const startPage = (pageGroup - 1) * pagesPerGroup + 1;
+    const endPage = Math.min(pageGroup * pagesPerGroup, totalPages);
+
     return (
         <div>
-            <h2>Lista de Productos</h2>
+            <h2 className='mt-4 mb-3'>Lista de Productos</h2>
             <input
                 type="text"
                 placeholder="Buscar por nombre de producto, proveedor, UCC"
@@ -68,16 +83,34 @@ const ProductList = () => {
                     )}
                 </tbody>
             </table>
-            <div className="pagination">
-                {Array.from({ length: totalPages }, (_, index) => (
-                    <button
-                        key={index}
-                        className={`page-item ${page === index + 1 ? 'active' : ''}`}
-                        onClick={() => handlePageChange(index + 1)}
-                    >
-                        {index + 1}
-                    </button>
-                ))}
+            <div className="d-flex justify-content-center">
+                <div className="pagination">
+                    {pageGroup > 1 && (
+                        <button
+                            className="page-item mx-1 page-link"
+                            onClick={handlePreviousPageGroup}
+                        >
+                            &laquo;
+                        </button>
+                    )}
+                    {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                        <button
+                            key={startPage + index}
+                            className={`page-item ${page === startPage + index ? 'active' : ''} mx-1 page-link`}
+                            onClick={() => handlePageChange(startPage + index)}
+                        >
+                            {startPage + index}
+                        </button>
+                    ))}
+                    {endPage < totalPages && (
+                        <button
+                            className="page-item mx-1 page-link "
+                            onClick={handleNextPageGroup}
+                        >
+                            &raquo;
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     );
