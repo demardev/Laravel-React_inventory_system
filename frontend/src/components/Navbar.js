@@ -1,10 +1,8 @@
 import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import authService from '../authService'; // Asegúrate de importar authService
 
 function NavigationBar() {
-    const currentUser = authService.getCurrentUser();
 
     return (
         <Navbar bg="light" expand="lg">
