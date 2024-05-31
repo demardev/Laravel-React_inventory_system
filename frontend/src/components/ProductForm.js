@@ -25,7 +25,7 @@ const ProductForm = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="form-group">
+            <div className="form-group mt-4 mb-3">
                 <label>Nombre del Producto</label>
                 <input
                     type="text"
@@ -36,7 +36,7 @@ const ProductForm = () => {
                     placeholder="Nombre del Producto"
                 />
             </div>
-            <div className="form-group">
+            <div className="form-group my-3">
                 <label>Descripción</label>
                 <textarea
                     name="description"
@@ -46,7 +46,7 @@ const ProductForm = () => {
                     placeholder="Descripción"
                 />
             </div>
-            <button type="submit" className="btn btn-primary">Guardar Producto</button>
+            <button type="submit" className="btn btn-dark">Guardar Producto</button>
         </form>
     );
 };
