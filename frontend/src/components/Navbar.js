@@ -3,7 +3,7 @@ import { Navbar, Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 function NavigationBar() {
-
+// Barra de navegación principal del sistema de inventario
     return (
         <Navbar bg="dark" variant="dark" expand="lg">
             <Navbar.Brand className="text-white mx-3" href="/">Sistema de Inventario CIMCO</Navbar.Brand>
