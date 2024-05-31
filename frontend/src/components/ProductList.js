@@ -55,7 +55,7 @@ const ProductList = () => {
                 placeholder="Buscar por nombre de producto, proveedor, UCC"
                 value={search}
                 onChange={handleSearchChange}
-                className="form-control mb-3"
+                className="form-control mb-3 border-dark"
             />
             <table className="table">
                 <thead>
@@ -104,7 +104,7 @@ const ProductList = () => {
                     ))}
                     {endPage < totalPages && (
                         <button
-                            className="page-item mx-1 page-link "
+                            className="page-item mx-1 page-link"
                             onClick={handleNextPageGroup}
                         >
                             &raquo;

@@ -24,7 +24,7 @@ const SupplierForm = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <div className="form-group">
+            <div className="form-group mt-4 mb-3">
                 <label>Nombre del Proveedor</label>
                 <input
                     type="text"
@@ -35,7 +35,7 @@ const SupplierForm = () => {
                     placeholder="Nombre del Proveedor"
                 />
             </div>
-            <div className="form-group">
+            <div className="form-group my-3">
                 <label>Dirección</label>
                 <input
                     type="text"
@@ -46,7 +46,7 @@ const SupplierForm = () => {
                     placeholder="Dirección"
                 />
             </div>
-            <button type="submit" className="btn btn-primary">Guardar Proveedor</button>
+            <button type="submit" className="btn btn-dark">Guardar Proveedor</button>
         </form>
     );
 };

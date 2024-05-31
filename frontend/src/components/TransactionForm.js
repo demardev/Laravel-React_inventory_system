@@ -74,9 +74,9 @@ const TransactionForm = () => {
 
     return (
         <div>
-            <h2>Agregar Transacción</h2>
+            <h2 className='mt-4 mb-3'>Agregar Transacción</h2>
             <form onSubmit={handleSubmit}>
-                <div className="form-group">
+                <div className="form-group my-3">
                     <label>Producto</label>
                     <Select
                         name="product_id"
@@ -85,7 +85,7 @@ const TransactionForm = () => {
                         onChange={handleSelectChange}
                     />
                 </div>
-                <div className="form-group">
+                <div className="form-group my-3">
                     <label>Proveedor</label>
                     <Select
                         name="supplier_id"
@@ -94,7 +94,7 @@ const TransactionForm = () => {
                         onChange={handleSelectChange}
                     />
                 </div>
-                <div className="form-group">
+                <div className="form-group my-3">
                     <label>Tipo de Transacción</label>
                     <Select
                         name="type"
@@ -103,7 +103,7 @@ const TransactionForm = () => {
                         onChange={handleSelectChange}
                     />
                 </div>
-                <div className="form-group">
+                <div className="form-group my-3">
                     <label>Cantidad</label>
                     <input
                         type="number"
@@ -118,7 +118,7 @@ const TransactionForm = () => {
                     name="user_id"
                     value={transaction.user_id}
                 />
-                <button type="submit" className="btn btn-primary">Guardar Transacción</button>
+                <button type="submit" className="btn btn-dark">Guardar Transacción</button>
                 {message && <p>{message}</p>}
             </form>
         </div>

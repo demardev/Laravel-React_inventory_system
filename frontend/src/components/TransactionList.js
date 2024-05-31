@@ -6,6 +6,8 @@ const TransactionList = () => {
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [pageGroup, setPageGroup] = useState(1);
+    const pagesPerGroup = 10;
 
     useEffect(() => {
         fetchTransactions();
@@ -38,15 +40,28 @@ const TransactionList = () => {
         setPage(newPage);
     };
 
+    const handleNextPageGroup = () => {
+        setPageGroup(pageGroup + 1);
+        setPage((pageGroup * pagesPerGroup) + 1);
+    };
+
+    const handlePreviousPageGroup = () => {
+        setPageGroup(pageGroup - 1);
+        setPage(((pageGroup - 2) * pagesPerGroup) + 1);
+    };
+
+    const startPage = (pageGroup - 1) * pagesPerGroup + 1;
+    const endPage = Math.min(pageGroup * pagesPerGroup, totalPages);
+
     return (
         <div>
-            <h2>Lista de Transacciones</h2>
+            <h2 className='mt-4 mb-3'>Lista de Transacciones</h2>
             <input
                 type="text"
                 placeholder="Buscar por nombre de producto, proveedor, UCC, usuario"
                 value={search}
                 onChange={handleSearchChange}
-                className="form-control mb-3"
+                className="form-control mb-3 border-dark"
             />
             <table className="table">
                 <thead>
@@ -86,15 +101,31 @@ const TransactionList = () => {
             </table>
             <div className="d-flex justify-content-center">
                 <div className="pagination">
-                    {Array.from({ length: totalPages }, (_, index) => (
+                    {pageGroup > 1 && (
                         <button
-                            key={index}
-                            className={`page-item ${page === index + 1 ? 'active' : ''} page-item mx-1 mb-4 page-link`}
-                            onClick={() => handlePageChange(index + 1)}
+                            className="page-item mx-1 page-link"
+                            onClick={handlePreviousPageGroup}
                         >
-                            {index + 1}
+                            &laquo;
+                        </button>
+                    )}
+                    {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
+                        <button
+                            key={startPage + index}
+                            className={`page-item ${page === startPage + index ? 'active' : ''} page-item mx-1 mb-4 page-link`}
+                            onClick={() => handlePageChange(startPage + index)}
+                        >
+                            {startPage + index}
                         </button>
                     ))}
+                    {endPage < totalPages && (
+                        <button
+                            className="page-item mx-1 page-link"
+                            onClick={handleNextPageGroup}
+                        >
+                            &raquo;
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
