@@ -82,3 +82,30 @@ https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.2.12/xampp-window
 
 - Abre tu navegador y navega a `http://localhost:3000` para acceder al frontend.
 - La API del backend estará disponible en `http://localhost:8000`.
+- Dentro del programa debes añadir un producto y un proveedor
+- Añadiendo Producto: (Ir a "Agregar producto")
+    ![imagen](https://github.com/demardev/Laravel-React_inventory_system/assets/127986092/8a286643-2503-494c-91a3-3565a056405e)
+- Añadiendo Proveedor: (Ir a "Agregar Proveedor")
+    ![imagen](https://github.com/demardev/Laravel-React_inventory_system/assets/127986092/ebdcae84-2bf1-47da-95fd-434ef2432c8b)
+- Crear una transacción: (Ir a "Agregar Transacción")
+    ![imagen](https://github.com/demardev/Laravel-React_inventory_system/assets/127986092/75a66f1e-3b11-4426-9a30-85cb47f25b2f)
+- Puedes seleccionar cualquiera de los productos que se han agregado.
+    ![imagen](https://github.com/demardev/Laravel-React_inventory_system/assets/127986092/283b76e8-e63d-44ad-b54e-d4e430b7e849)
+- Puedes seleccionar cualquier proveedor que se han agregado.
+    ![imagen](https://github.com/demardev/Laravel-React_inventory_system/assets/127986092/956dd216-dd02-4cfa-b7fe-bd97568372ea)
+- Puedes seleccionar una de las transacciones.
+    ![imagen](https://github.com/demardev/Laravel-React_inventory_system/assets/127986092/956f0507-e354-406c-aa2a-73c291025bf9)
+- Coloca la cantidad de articulos o cajas que se veran afectadas.
+    ![imagen](https://github.com/demardev/Laravel-React_inventory_system/assets/127986092/3b6198bf-05de-48bd-8bc1-a8d839fe32d9)
+- Guarda la transacción.
+- Verificando la transacción: (Ir a "Transacciones")
+    ![imagen](https://github.com/demardev/Laravel-React_inventory_system/assets/127986092/d53c4654-850f-4ca8-a681-cedfd50d866e)
+- Buscando otras transacciones
+    ![imagen](https://github.com/demardev/Laravel-React_inventory_system/assets/127986092/0f6ee825-91a0-40bd-b7df-ab5fca03fc8b)
+- Comprobando existencias: (Ir a "Productos")
+    ![imagen](https://github.com/demardev/Laravel-React_inventory_system/assets/127986092/b94230ae-2f4a-4b15-b304-b4afee726e20)
+- Buscando Existencias de otros productos:
+    ![imagen](https://github.com/demardev/Laravel-React_inventory_system/assets/127986092/a7862c8a-4720-435b-bfa9-ab5a98e206b7)
+
+Nota: Solo se muestran los productos que tengan una transacción para poder tener la trazabilidad del proveedor asi como su UCC.
+
